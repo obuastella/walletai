@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Index from "./pages";
 import Dashboard from "./pages/Dashboard/Dashboard";
+import TransactionHistory from "./pages/History/TransactionHistory";
 
 function App() {
   return (
@@ -8,6 +9,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Index />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/history" element={<TransactionHistory />} />
       </Routes>
     </Router>
   );

@@ -11,56 +11,9 @@ import WalletBalance from "./components/WalletBalance";
 import SecurityStats from "./components/SecurityStats";
 import Header from "./components/Header";
 import MonitoringStatus from "./components/MonitoringStatus";
+import { transactions } from "../transactions";
 
 export default function Dashboard() {
-  // Mock data
-  const transactions = [
-    {
-      id: 1,
-      type: "received",
-      amount: 250.0,
-      description: "Salary Payment",
-      date: "2 hours ago",
-      aiInsight: "Regular income pattern verified - Low risk",
-      category: "Income",
-      securityStatus: "verified",
-      riskLevel: "low",
-    },
-    {
-      id: 2,
-      type: "sent",
-      amount: 89.99,
-      description: "Netflix Subscription",
-      date: "1 day ago",
-      aiInsight: "Recurring merchant - Behavioral pattern normal",
-      category: "Entertainment",
-      securityStatus: "verified",
-      riskLevel: "low",
-    },
-    {
-      id: 3,
-      type: "sent",
-      amount: 450.0,
-      description: "Online Purchase",
-      date: "2 days ago",
-      aiInsight: "New merchant detected - Location verified",
-      category: "Shopping",
-      securityStatus: "flagged",
-      riskLevel: "medium",
-    },
-    {
-      id: 4,
-      type: "received",
-      amount: 1200.0,
-      description: "Freelance Project",
-      date: "3 days ago",
-      aiInsight: "Unusual amount - Biometric verification passed",
-      category: "Income",
-      securityStatus: "verified",
-      riskLevel: "low",
-    },
-  ];
-
   const getSecurityColor = (status: any) => {
     switch (status) {
       case "verified":
