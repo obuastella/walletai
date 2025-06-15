@@ -1,6 +1,7 @@
 import { EyeOff, Eye, Shield, Send, Download } from "lucide-react";
 import { useState } from "react";
 import SendMoney from "./SendMoney";
+import Request from "./Request";
 
 const quickActions = [
   { icon: Send, label: "Send Money", color: "purple" },
@@ -12,9 +13,12 @@ export default function WalletBalance() {
   let securityScore = 94;
   const balance = 2847.5;
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
   const closeModal = () => {
     setIsModalOpen(false);
+  };
+  const closeRequestModal = () => {
+    setIsRequestModalOpen(false);
   };
 
   return (
@@ -63,10 +67,14 @@ export default function WalletBalance() {
           {quickActions.map((action, index) => (
             <button
               key={index}
-              onClick={() =>
-                action.label === "Send Money" && setIsModalOpen(true)
-              }
-              className="bg-white/10 backdrop-blur-sm hover:bg-white/20 rounded-2xl p-4 transition-all duration-300 group"
+              onClick={() => {
+                if (action.label === "Send Money") {
+                  setIsModalOpen(true);
+                } else if (action.label === "Request") {
+                  setIsRequestModalOpen(true);
+                }
+              }}
+              className="cursor-pointer bg-white/10 backdrop-blur-sm hover:bg-white/20 rounded-2xl p-4 transition-all duration-300 group"
             >
               <action.icon className="w-6 h-6 text-white mb-2 group-hover:scale-110 transition-transform" />
               <p className="text-white text-sm font-medium">{action.label}</p>
@@ -77,6 +85,7 @@ export default function WalletBalance() {
 
       {/* Enhanced Modal */}
       {isModalOpen && <SendMoney closeModal={closeModal} />}
+      {isRequestModalOpen && <Request closeRequestModal={closeRequestModal} />}
     </div>
   );
 }
