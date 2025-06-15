@@ -1,14 +1,21 @@
 import { EyeOff, Eye, Shield, Send, Download } from "lucide-react";
 import { useState } from "react";
+import SendMoney from "./SendMoney";
+
 const quickActions = [
   { icon: Send, label: "Send Money", color: "purple" },
   { icon: Download, label: "Request", color: "blue" },
 ];
+
 export default function WalletBalance() {
   const [balanceVisible, setBalanceVisible] = useState(true);
-  //   const [securityScore, setSecurityScore] = useState(94);
   let securityScore = 94;
   const balance = 2847.5;
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
 
   return (
     <div className="bg-gradient-to-br from-purple-600 via-purple-700 to-blue-700 rounded-3xl p-8 mb-8 relative overflow-hidden">
@@ -22,7 +29,7 @@ export default function WalletBalance() {
             <div className="flex items-center space-x-3 mt-2">
               {balanceVisible ? (
                 <h2 className="text-4xl font-bold text-white">
-                  ${balance.toLocaleString()}
+                  N{balance.toLocaleString()}
                 </h2>
               ) : (
                 <h2 className="text-4xl font-bold text-white">****</h2>
@@ -56,6 +63,9 @@ export default function WalletBalance() {
           {quickActions.map((action, index) => (
             <button
               key={index}
+              onClick={() =>
+                action.label === "Send Money" && setIsModalOpen(true)
+              }
               className="bg-white/10 backdrop-blur-sm hover:bg-white/20 rounded-2xl p-4 transition-all duration-300 group"
             >
               <action.icon className="w-6 h-6 text-white mb-2 group-hover:scale-110 transition-transform" />
@@ -64,6 +74,9 @@ export default function WalletBalance() {
           ))}
         </div>
       </div>
+
+      {/* Enhanced Modal */}
+      {isModalOpen && <SendMoney closeModal={closeModal} />}
     </div>
   );
 }
