@@ -22,48 +22,59 @@ export default function WalletBalance() {
   };
 
   return (
-    <div className="bg-gradient-to-br from-purple-600 via-purple-700 to-blue-700 rounded-3xl p-8 mb-8 relative overflow-hidden">
-      <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-32 translate-x-32"></div>
-      <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full translate-y-24 -translate-x-24"></div>
+    <div className="bg-gradient-to-br from-purple-600 via-purple-700 to-blue-700 rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 mb-4 sm:mb-6 lg:mb-8 relative overflow-hidden w-full max-w-full">
+      {/* Background decorative elements - responsive sizing */}
+      <div className="absolute top-0 right-0 w-32 h-32 sm:w-48 sm:h-48 lg:w-64 lg:h-64 bg-white/5 rounded-full -translate-y-16 sm:-translate-y-24 lg:-translate-y-32 translate-x-16 sm:translate-x-24 lg:translate-x-32"></div>
+      <div className="absolute bottom-0 left-0 w-24 h-24 sm:w-36 sm:h-36 lg:w-48 lg:h-48 bg-white/5 rounded-full translate-y-12 sm:translate-y-18 lg:translate-y-24 -translate-x-12 sm:-translate-x-18 lg:-translate-x-24"></div>
 
       <div className="relative z-10">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <p className="text-purple-200 text-sm font-medium">Total Balance</p>
-            <div className="flex items-center space-x-3 mt-2">
+        {/* Main content - responsive layout */}
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-6 lg:mb-8 space-y-4 sm:space-y-0">
+          {/* Balance section */}
+          <div className="flex-1">
+            <p className="text-purple-200 text-xs sm:text-sm font-medium">
+              Total Balance
+            </p>
+            <div className="flex items-center space-x-2 sm:space-x-3 mt-1 sm:mt-2">
               {balanceVisible ? (
-                <h2 className="text-4xl font-bold text-white">
+                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white break-all">
                   N{balance.toLocaleString()}
                 </h2>
               ) : (
-                <h2 className="text-4xl font-bold text-white">****</h2>
+                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white">
+                  ****
+                </h2>
               )}
               <button
                 onClick={() => setBalanceVisible(!balanceVisible)}
-                className="p-2 text-purple-200 hover:text-white hover:bg-white/10 rounded-xl transition-all"
+                className="p-1.5 sm:p-2 text-purple-200 hover:text-white hover:bg-white/10 rounded-lg sm:rounded-xl transition-all flex-shrink-0"
               >
                 {balanceVisible ? (
-                  <EyeOff className="w-5 h-5" />
+                  <EyeOff className="w-4 h-4 sm:w-5 sm:h-5" />
                 ) : (
-                  <Eye className="w-5 h-5" />
+                  <Eye className="w-4 h-4 sm:w-5 sm:h-5" />
                 )}
               </button>
             </div>
           </div>
-          <div className="text-right">
-            <div className="flex items-center space-x-2 mb-2">
-              <Shield className="w-5 h-5 text-green-300" />
-              <span className="text-purple-200 text-sm">Security Score</span>
+
+          {/* Security score section */}
+          <div className="text-left sm:text-right sm:flex-shrink-0">
+            <div className="flex items-center space-x-2 mb-1 sm:mb-2 sm:justify-end">
+              <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-green-300" />
+              <span className="text-purple-200 text-xs sm:text-sm">
+                Security Score
+              </span>
             </div>
-            <div className="text-3xl font-bold text-white">
+            <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-white">
               {securityScore}%
             </div>
-            <p className="text-green-300 text-sm">Excellent</p>
+            <p className="text-green-300 text-xs sm:text-sm">Excellent</p>
           </div>
         </div>
 
-        {/* Quick Actions */}
-        <div className="grid grid-cols-2 gap-4">
+        {/* Quick Actions - responsive grid */}
+        <div className="grid grid-cols-2 gap-3 sm:gap-4">
           {quickActions.map((action, index) => (
             <button
               key={index}
@@ -74,10 +85,12 @@ export default function WalletBalance() {
                   setIsRequestModalOpen(true);
                 }
               }}
-              className="cursor-pointer bg-white/10 backdrop-blur-sm hover:bg-white/20 rounded-2xl p-4 transition-all duration-300 group"
+              className="cursor-pointer bg-white/10 backdrop-blur-sm hover:bg-white/20 rounded-xl sm:rounded-2xl p-3 sm:p-4 transition-all duration-300 group min-h-[80px] sm:min-h-[100px] flex flex-col items-center justify-center"
             >
-              <action.icon className="w-6 h-6 text-white mb-2 group-hover:scale-110 transition-transform" />
-              <p className="text-white text-sm font-medium">{action.label}</p>
+              <action.icon className="w-5 h-5 sm:w-6 sm:h-6 text-white mb-1 sm:mb-2 group-hover:scale-110 transition-transform" />
+              <p className="text-white text-xs sm:text-sm font-medium text-center leading-tight">
+                {action.label}
+              </p>
             </button>
           ))}
         </div>

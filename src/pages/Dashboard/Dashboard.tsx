@@ -21,7 +21,7 @@ export default function Dashboard() {
             {/* Secure Transactions */}
             <div className="bg-gray-900/50 backdrop-blur-xl rounded-3xl p-6 border border-gray-800">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-xl font-bold text-white">
+                <h3 className="text-base md:text-xl font-bold text-white">
                   Secured Transactions
                 </h3>
                 <button
