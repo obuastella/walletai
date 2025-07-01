@@ -1,7 +1,17 @@
+import {
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+} from "firebase/auth";
 import { Lock, Mail, EyeOff, Eye } from "lucide-react";
 import { useState } from "react";
+import { auth, db } from "../../config/firebase";
+import { BASE_URL } from "../../config/config";
+import { doc, serverTimestamp, writeBatch } from "firebase/firestore";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 export default function RegisterForm() {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState<any>("");
   const [password, setPassword] = useState<any>("");
@@ -44,7 +54,8 @@ export default function RegisterForm() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
     // Validate form before submission
     if (!validateForm()) {
       return;
@@ -56,11 +67,41 @@ export default function RegisterForm() {
     };
 
     setIsLoading(true);
+    console.log("Payload: ", payload);
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      console.log("Payload: ", payload);
-      // navigate("/dashboard");
+      // Create the user account
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredential.user;
+      // Send email verification first (doesn't require Firestore write)
+      const actionCodeSettings = {
+        url: `${BASE_URL}/`,
+        handleCodeInApp: true,
+      };
+      await sendEmailVerification(user, actionCodeSettings);
+      // Wait for auth state to be ready (important!)
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      // Now perform Firestore operations
+      const batch = writeBatch(db);
+
+      // User document
+      const userDocRef = doc(db, "Users", user.uid);
+      batch.set(userDocRef, {
+        email: user.email,
+        accountBalance: 5000,
+        isVerified: false,
+        createdAt: serverTimestamp(),
+      });
+      // Execute all operations as a batch
+      await batch.commit();
+      toast.success("Verification email sent! Please check your inbox.", {
+        position: "top-right",
+      });
+      navigate("/verify");
     } catch (error) {
       console.error("Submission error:", error);
     } finally {
