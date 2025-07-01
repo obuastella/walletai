@@ -1,7 +1,7 @@
 export default function MonitoringStatus() {
   return (
     <div className="bg-gray-900/50 backdrop-blur-xl rounded-3xl p-6 border border-gray-800">
-      <h3 className="text-lg font-bold text-white mb-4">AI Monitoring</h3>
+      <h3 className="text-lg font-bold text-white mb-4">System Monitoring</h3>
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <span className="text-gray-300 text-sm">Real-time Analysis</span>

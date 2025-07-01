@@ -1,4 +1,4 @@
-import { Brain, Shield, Settings, LogOut, Menu, X } from "lucide-react";
+import { Brain, Shield, LogOut, Menu, X } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -48,12 +48,12 @@ export default function Header() {
           <div className="hidden md:flex items-center space-x-3 lg:space-x-4">
             <div className="flex items-center space-x-2 bg-gray-800/50 px-3 py-2 rounded-xl">
               <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-              <span className="text-sm text-gray-300">AI Monitoring</span>
+              <span className="text-sm text-gray-300">System Monitoring</span>
             </div>
 
-            <button className="cursor-pointer p-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-xl transition-all">
+            {/* <button className="cursor-pointer p-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-xl transition-all">
               <Settings className="w-5 h-5" />
-            </button>
+            </button> */}
 
             <button
               onClick={handleLogout}
@@ -103,17 +103,17 @@ export default function Header() {
             <div className="flex items-center justify-center">
               <div className="flex items-center space-x-2 bg-gray-800/50 px-3 py-2 rounded-xl">
                 <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                <span className="text-sm text-gray-300">AI Monitoring</span>
+                <span className="text-sm text-gray-300">System Monitoring</span>
               </div>
             </div>
 
             {/* Settings button */}
-            <div className="flex justify-center">
+            {/* <div className="flex justify-center">
               <button className="cursor-pointer flex items-center space-x-2 p-3 text-gray-400 hover:text-white hover:bg-gray-800 rounded-xl transition-all">
                 <Settings className="w-5 h-5" />
                 <span className="text-sm">Settings</span>
               </button>
-            </div>
+            </div> */}
           </div>
         )}
       </div>
