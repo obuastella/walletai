@@ -1,23 +1,47 @@
+import { signInWithEmailAndPassword } from "firebase/auth";
+
 import { Lock, Mail, EyeOff, Eye } from "lucide-react";
 import { useState } from "react";
+import { auth } from "../../config/firebase";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export default function LoginForm() {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
     const payload = {
       email: email,
       password: password,
     };
     setIsLoading(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    setIsLoading(false);
     console.log("Payload: ", payload);
-    // navigate("/dashboard");
+    try {
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredential.user;
+      console.log("user logged in successfully", user);
+      toast.success("Logged in successfully!");
+      navigate("/dashboard");
+    } catch (error: any) {
+      console.log("An error occured:", error);
+      if (error.message === "Firebase: Error (auth/invalid-credential).") {
+        toast.error("Invalid email or Password", {
+          position: "top-right",
+        });
+      } else {
+        toast.error(error.message);
+      }
+      setIsLoading(false);
+    }
   };
   return (
     <div className="space-y-6">
@@ -82,13 +106,6 @@ export default function LoginForm() {
 
       {/* Remember Me & Forgot Password */}
       <div className="flex items-center justify-between pt-2">
-        <label className="flex items-center cursor-pointer">
-          <input
-            type="checkbox"
-            className="w-4 h-4 text-purple-500 bg-gray-800 border-gray-600 rounded focus:ring-purple-500 focus:ring-2"
-          />
-          <span className="ml-3 text-sm text-gray-400">Remember me</span>
-        </label>
         <button className="text-sm text-purple-400 hover:text-purple-300 font-medium transition-colors">
           Forgot password?
         </button>
