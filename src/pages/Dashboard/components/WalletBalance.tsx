@@ -4,6 +4,9 @@ import SendMoney from "./SendMoney";
 import Request from "./Request";
 import useUserData from "../../../hooks/useUserData";
 import { useUserStore } from "../../../store/userStore";
+import { auth, db } from "../../../config/firebase";
+import { doc, updateDoc } from "firebase/firestore";
+import { toast } from "react-toastify";
 
 const quickActions = [
   { icon: Send, label: "Send Money", color: "purple" },
@@ -12,7 +15,10 @@ const quickActions = [
 
 export default function WalletBalance() {
   useUserData();
+
   const { accountBalance } = useUserStore();
+  const [isLoading, setIsLoading] = useState(false);
+  const transferAmount = 5000;
   const [balanceVisible, setBalanceVisible] = useState(true);
   let securityScore = 94;
 
@@ -24,6 +30,33 @@ export default function WalletBalance() {
   };
   const closeRequestModal = () => {
     setIsRequestModalOpen(false);
+  };
+
+  const handleAdd = async () => {
+    setIsLoading(true);
+
+    try {
+      // Get current user ID
+      const userId = auth.currentUser?.uid;
+
+      if (userId) {
+        // Update user document with new balance
+        const userRef = doc(db, "Users", userId);
+
+        await updateDoc(userRef, {
+          accountBalance: accountBalance + transferAmount,
+        });
+
+        console.log("Balance updated relaod your page!");
+        toast.success("Balance updated relaod your page!");
+        setIsLoading(false);
+      }
+    } catch (error: any) {
+      console.log("An error occured", error);
+      toast.error("An error occurred");
+      setIsLoading(false);
+    }
+    setIsLoading(false);
   };
 
   return (
@@ -40,6 +73,13 @@ export default function WalletBalance() {
             <p className="text-purple-200 text-xs sm:text-sm font-medium">
               Total Balance
             </p>
+            <button
+              disabled={isLoading}
+              onClick={handleAdd}
+              className="px-6 p-1 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg text-sm cursor-pointer"
+            >
+              Add 5k
+            </button>
             <div className="flex items-center space-x-2 sm:space-x-3 mt-1 sm:mt-2">
               {balanceVisible ? (
                 <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white break-all">

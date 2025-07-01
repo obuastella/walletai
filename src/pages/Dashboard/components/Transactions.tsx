@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import useUserData from "../../../hooks/useUserData";
 import { useUserStore } from "../../../store/userStore";
+import { formatDate } from "../../../utils/formatDate";
 
 export default function Transactions() {
   useUserData();
@@ -68,11 +69,12 @@ export default function Transactions() {
                       <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 mb-2">
                         <div className="flex items-center gap-2">
                           <p className="text-gray-400 text-xs sm:text-sm">
-                            {
+                            {/* {
                               new Date(transaction.date)
                                 .toISOString()
                                 .split("T")[0]
-                            }
+                            } */}
+                            {formatDate(transaction.date)}
                           </p>
                           <span className="text-gray-600 hidden sm:inline">
                             •
