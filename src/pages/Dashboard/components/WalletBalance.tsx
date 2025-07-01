@@ -2,6 +2,8 @@ import { EyeOff, Eye, Shield, Send, Download } from "lucide-react";
 import { useState } from "react";
 import SendMoney from "./SendMoney";
 import Request from "./Request";
+import useUserData from "../../../hooks/useUserData";
+import { useUserStore } from "../../../store/userStore";
 
 const quickActions = [
   { icon: Send, label: "Send Money", color: "purple" },
@@ -9,11 +11,14 @@ const quickActions = [
 ];
 
 export default function WalletBalance() {
+  useUserData();
+  const { accountBalance } = useUserStore();
   const [balanceVisible, setBalanceVisible] = useState(true);
   let securityScore = 94;
-  const balance = 2847.5;
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
+
   const closeModal = () => {
     setIsModalOpen(false);
   };
@@ -38,7 +43,7 @@ export default function WalletBalance() {
             <div className="flex items-center space-x-2 sm:space-x-3 mt-1 sm:mt-2">
               {balanceVisible ? (
                 <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white break-all">
-                  N{balance.toLocaleString()}
+                  N {accountBalance}.00
                 </h2>
               ) : (
                 <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white">
@@ -50,9 +55,9 @@ export default function WalletBalance() {
                 className="p-1.5 sm:p-2 text-purple-200 hover:text-white hover:bg-white/10 rounded-lg sm:rounded-xl transition-all flex-shrink-0"
               >
                 {balanceVisible ? (
-                  <EyeOff className="w-4 h-4 sm:w-5 sm:h-5" />
-                ) : (
                   <Eye className="w-4 h-4 sm:w-5 sm:h-5" />
+                ) : (
+                  <EyeOff className="w-4 h-4 sm:w-5 sm:h-5" />
                 )}
               </button>
             </div>
