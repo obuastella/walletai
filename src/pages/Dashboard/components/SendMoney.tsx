@@ -10,6 +10,7 @@ export default function SendMoney({ closeModal }: any) {
     { code: "033", name: "UBA" },
   ]);
   const [selectedBank, setSelectedBank] = useState("");
+  const [narration, setNarration] = useState("");
   const [step, setStep] = useState(1);
   const [pin, setPin] = useState("");
   const [amount, setAmount] = useState("");
@@ -41,6 +42,13 @@ export default function SendMoney({ closeModal }: any) {
   };
 
   const handleSend = () => {
+    const payload = {
+      amount: amount,
+      accountNumber: accountNumber,
+      selectedBank: selectedBank,
+      narration: narration,
+    };
+    console.log("Payload: ", payload);
     if (pin.length === 4) {
       setIsLoading(true);
       setTimeout(() => {
@@ -48,6 +56,7 @@ export default function SendMoney({ closeModal }: any) {
         setAmount("");
         setAccountNumber("");
         setSelectedBank("");
+        setNarration("");
         setAccountName("");
         setPin("");
         setStep(1);
@@ -157,6 +166,23 @@ export default function SendMoney({ closeModal }: any) {
                       </option>
                     ))}
                   </select>
+                </div>
+              </div>
+
+              {/* Narration */}
+              <div className="relative">
+                <label className="text-gray-300 text-sm font-medium mb-2 block">
+                  Narration
+                </label>
+                <div className="relative">
+                  <Building className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <input
+                    type="text"
+                    placeholder="Narration"
+                    value={narration}
+                    onChange={(e) => setNarration(e.target.value)}
+                    className="w-full bg-gray-800/50 backdrop-blur-sm text-white pl-10 pr-4 py-3 rounded-xl border border-gray-600/50 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 focus:outline-none transition-all"
+                  />
                 </div>
               </div>
 

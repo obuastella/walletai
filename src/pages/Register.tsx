@@ -1,11 +1,11 @@
 import { Brain } from "lucide-react";
-import LoginForm from "./(Auth)/LoginForm";
 import { useNavigate } from "react-router-dom";
+import RegisterForm from "./(Auth)/RegisterForm";
 
-export default function Index() {
+export default function Register() {
   const navigate = useNavigate();
   const handleNavigate = () => {
-    navigate("/register");
+    navigate("/");
   };
   return (
     <>
@@ -33,28 +33,18 @@ export default function Index() {
             </div>
 
             {/* Login Form */}
-            <LoginForm />
+            <RegisterForm />
 
             {/* Sign Up Link */}
             <div className="text-center mt-8">
               <p className="text-gray-400">
-                Don't have an account?{" "}
+                Already have an account?{" "}
                 <button
                   onClick={handleNavigate}
                   className="cursor-pointer text-purple-400 hover:text-purple-300 font-semibold transition-colors"
                 >
-                  Sign up
+                  Log in
                 </button>
-              </p>
-            </div>
-          </div>
-
-          {/* Security Badge */}
-          <div className="text-center mt-6">
-            <div className="inline-flex items-center px-4 py-2 bg-gray-900/50 rounded-full border border-gray-700/50">
-              <div className="w-2 h-2 bg-green-400 rounded-full mr-2 animate-pulse"></div>
-              <p className="text-gray-400 text-sm font-medium">
-                Secured with 256-bit encryption
               </p>
             </div>
           </div>
