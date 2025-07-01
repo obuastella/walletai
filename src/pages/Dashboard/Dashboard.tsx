@@ -10,6 +10,7 @@ export default function Dashboard() {
   const viewTransactions = () => {
     navigate("/history");
   };
+
   return (
     <div className="min-h-screen bg-black text-white">
       <Header />

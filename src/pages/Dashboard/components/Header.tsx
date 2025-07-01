@@ -1,17 +1,25 @@
 import { Brain, Shield, Settings, LogOut, Menu, X } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { auth } from "../../../config/firebase";
 
 export default function Header() {
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const handleLogout = () => {
-    navigate("/");
-  };
-
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await auth.signOut();
+      toast.success("Logged out successfully!");
+      navigate("/");
+    } catch (error: any) {
+      console.log("Error logging out: ", error?.message);
+    }
   };
 
   return (
