@@ -11,49 +11,13 @@ import {
 import useUserData from "../../../hooks/useUserData";
 import { useUserStore } from "../../../store/userStore";
 
-const transactions = [
-  {
-    id: 1,
-    type: "received",
-    description: "Salary Payment",
-    date: "2025-06-29",
-    category: "Income",
-    amount: 2500.0,
-    securityStatus: "verified",
-    riskLevel: "low",
-    aiInsight: "Regular monthly salary - pattern verified",
-  },
-  {
-    id: 2,
-    type: "sent",
-    description: "Online Shopping",
-    date: "2025-06-28",
-    category: "Shopping",
-    amount: 149.99,
-    securityStatus: "verified",
-    riskLevel: "low",
-    aiInsight: "Trusted merchant - purchase pattern normal",
-  },
-  {
-    id: 3,
-    type: "sent",
-    description: "Unknown Transfer",
-    date: "2025-06-27",
-    category: "Transfer",
-    amount: 500.0,
-    securityStatus: "flagged",
-    riskLevel: "medium",
-    aiInsight: "Unusual recipient - requires verification",
-  },
-];
-
 export default function Transactions() {
   useUserData();
   const { transactions } = useUserStore();
   console.log("User transactions: ", transactions);
   const getSecurityColor = (status: any) => {
     const colors: any = {
-      verified: "text-green-400",
+      low: "text-green-400",
       flagged: "text-yellow-400",
       blocked: "text-red-400",
     };
@@ -97,40 +61,41 @@ export default function Transactions() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center space-x-2 mb-1">
                         <h4 className="text-white font-semibold text-sm sm:text-base truncate">
-                          {transaction.description}
+                          {transaction.narration}
                         </h4>
                         <SecurityIcon
-                          className={`w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0 ${getSecurityColor(transaction.securityStatus)}`}
+                          className={`w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0 ${getSecurityColor(transaction.status)}`}
                         />
                       </div>
                       <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 mb-2">
                         <div className="flex items-center gap-2">
                           <p className="text-gray-400 text-xs sm:text-sm">
-                            {transaction.date}
+                            {
+                              new Date(transaction.date)
+                                .toISOString()
+                                .split("T")[0]
+                            }
                           </p>
                           <span className="text-gray-600 hidden sm:inline">
                             •
                           </span>
-                          <span className="text-xs bg-gray-700 text-gray-300 px-2 py-0.5 sm:py-1 rounded-full">
-                            {transaction.category}
-                          </span>
                         </div>
                         <span
                           className={`text-xs px-2 py-0.5 sm:py-1 rounded-full self-start ${
-                            transaction.riskLevel === "low"
+                            transaction.status === "low"
                               ? "bg-green-500/20 text-green-400"
-                              : transaction.riskLevel === "medium"
+                              : transaction.status === "medium"
                                 ? "bg-yellow-500/20 text-yellow-400"
                                 : "bg-red-500/20 text-red-400"
                           }`}
                         >
-                          {transaction.riskLevel} risk
+                          {transaction.status} risk
                         </span>
                       </div>
                       <div className="flex items-center space-x-2">
                         <Brain className="w-3 h-3 text-purple-400 flex-shrink-0" />
                         <p className="text-purple-400 text-xs sm:text-sm whitespace-nowrap overflow-hidden text-ellipsis">
-                          {transaction.aiInsight}
+                          {transaction.systemInsight}
                         </p>
                       </div>
                     </div>
@@ -139,9 +104,8 @@ export default function Transactions() {
                     <p
                       className={`font-bold text-sm sm:text-base mb-1 ${isReceived ? "text-green-400" : "text-white"}`}
                     >
-                      {isReceived ? "+" : "-"}${transaction.amount.toFixed(2)}
+                      {isReceived ? "+" : "-"}N{transaction.amount.toFixed(2)}
                     </p>
-                    <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-white transition-colors" />
                   </div>
                 </div>
               </div>

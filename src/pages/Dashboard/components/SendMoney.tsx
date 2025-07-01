@@ -1,7 +1,113 @@
 import { Send, X, DollarSign, Building, User, Lock } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useUserStore } from "../../../store/userStore";
+import useUserData from "../../../hooks/useUserData";
+import { doc, updateDoc, arrayUnion } from "firebase/firestore";
+import { toast } from "react-toastify";
+import { auth, db } from "../../../config/firebase";
 
 export default function SendMoney({ closeModal }: any) {
+  useUserData();
+  const { accountBalance } = useUserStore();
+  //
+  // Risk assessment rules
+  const assessTransactionRisk = (
+    amount: any,
+    narration: any,
+    accountBalance: any
+  ) => {
+    const amountNum = parseFloat(amount);
+    const balanceRatio = amountNum / accountBalance;
+
+    // Normalize narration for pattern matching
+    const normalizedNarration = narration.toLowerCase().trim();
+
+    // High-risk keywords and patterns
+    const highRiskKeywords = [
+      "gambling",
+      "bet",
+      "loan",
+      "urgent",
+      "emergency",
+      "crypto",
+      "bitcoin",
+    ];
+    const mediumRiskKeywords = [
+      "transfer",
+      "payment",
+      "bill",
+      "rent",
+      "shopping",
+    ];
+    const lowRiskKeywords = ["salary", "refund", "family", "gift", "savings"];
+
+    // Check for suspicious patterns
+    const hasHighRiskKeyword = highRiskKeywords.some((keyword) =>
+      normalizedNarration.includes(keyword)
+    );
+    const hasMediumRiskKeyword = mediumRiskKeywords.some((keyword) =>
+      normalizedNarration.includes(keyword)
+    );
+    const hasLowRiskKeyword = lowRiskKeywords.some((keyword) =>
+      normalizedNarration.includes(keyword)
+    );
+
+    // Risk assessment logic
+    let status = "low";
+    let insight = "";
+
+    // High risk conditions
+    if (balanceRatio > 0.8) {
+      status = "high";
+      insight = "High-value transaction detected - Exceeds 80% of balance";
+    } else if (amountNum > 100000) {
+      status = "high";
+      insight =
+        "Large transaction amount detected - Enhanced monitoring required";
+    } else if (hasHighRiskKeyword) {
+      status = "high";
+      insight = "Suspicious pattern detected - High-risk transaction category";
+    }
+
+    // Medium risk conditions
+    else if (balanceRatio > 0.5) {
+      status = "medium";
+      insight = "Moderate transaction amount - Standard verification applied";
+    } else if (amountNum > 50000) {
+      status = "medium";
+      insight = "Medium-value transaction - Routine security checks completed";
+    } else if (hasMediumRiskKeyword) {
+      status = "medium";
+      insight = "Regular transaction pattern detected - Medium risk assessment";
+    }
+
+    // Low risk conditions
+    else if (hasLowRiskKeyword) {
+      status = "low";
+      insight = "Regular income/family pattern verified - Low risk transaction";
+    } else if (amountNum < 10000) {
+      status = "low";
+      insight = "Small transaction amount - Automated approval processed";
+    } else {
+      status = "low";
+      insight = "Standard transaction pattern - Low risk verified";
+    }
+
+    // Additional insights based on specific patterns
+    if (
+      normalizedNarration.includes("new") ||
+      normalizedNarration.includes("first")
+    ) {
+      insight = "New merchant detected - Transaction verified and approved";
+    }
+
+    if (normalizedNarration.length < 3) {
+      insight = "Minimal transaction description - Manual review recommended";
+      status = status === "low" ? "medium" : status;
+    }
+
+    return { status, insight };
+  };
   const [bankOptions] = useState([
     { code: "044", name: "Access Bank" },
     { code: "011", name: "First Bank" },
@@ -32,7 +138,13 @@ export default function SendMoney({ closeModal }: any) {
   }, [accountNumber, selectedBank]);
 
   const handleNext = () => {
-    if (step === 1 && amount && accountNumber.length === 10 && selectedBank) {
+    if (
+      step === 1 &&
+      amount &&
+      accountNumber.length === 10 &&
+      selectedBank &&
+      narration
+    ) {
       setStep(2);
     }
   };
@@ -41,28 +153,118 @@ export default function SendMoney({ closeModal }: any) {
     setStep(1);
   };
 
-  const handleSend = () => {
-    const payload = {
-      amount: amount,
-      accountNumber: accountNumber,
-      selectedBank: selectedBank,
-      narration: narration,
-    };
-    console.log("Payload: ", payload);
-    if (pin.length === 4) {
+  const handleSend = async () => {
+    try {
+      // Convert amount to number for comparison
+      const transferAmount = parseFloat(amount);
+
+      // Validate amount
+      if (isNaN(transferAmount) || transferAmount <= 0) {
+        toast.error("Please enter a valid amount");
+        return;
+      }
+
+      // Check if user has sufficient balance
+      if (transferAmount > accountBalance) {
+        toast.error(
+          `Insufficient funds! Your balance is ₦${accountBalance.toLocaleString()}`
+        );
+        return;
+      }
+
+      // Validate other required fields
+      if (!accountNumber || !selectedBank || !narration.trim()) {
+        toast.error("Please fill in all required fields");
+        return;
+      }
+
+      // Validate PIN
+      if (pin.length !== 4) {
+        toast.error("Please enter your 4-digit PIN");
+        return;
+      }
+
+      // Assess transaction risk and generate insights
+      const { status, insight } = assessTransactionRisk(
+        transferAmount,
+        narration,
+        accountBalance
+      );
+
+      // Create transaction object
+      const transaction = {
+        id: `txn_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        narration: narration.trim(),
+        date: new Date().toISOString(),
+        accountName: accountName,
+        accountNumber: accountNumber,
+        bank: selectedBank,
+        amount: transferAmount,
+        status: status, // high, medium, low
+        systemInsight: insight,
+        type: "debit", // since it's money going out
+        createdAt: new Date(),
+        processed: true,
+      };
+
+      const payload = {
+        amount: transferAmount,
+        accountNumber: accountNumber,
+        selectedBank: selectedBank,
+        narration: narration,
+        transaction: transaction,
+      };
+
+      console.log("Transaction Payload: ", payload);
+
       setIsLoading(true);
-      setTimeout(() => {
-        setIsLoading(false);
-        setAmount("");
-        setAccountNumber("");
-        setSelectedBank("");
-        setNarration("");
-        setAccountName("");
-        setPin("");
-        setStep(1);
-        closeModal();
-        alert("Money sent out!");
+
+      // Simulate API call and database update
+      setTimeout(async () => {
+        try {
+          // Get current user ID (replace with your auth method)
+          const userId = auth.currentUser?.uid; // or however you get user ID
+
+          if (userId) {
+            // Update user document with new transaction
+            const userRef = doc(db, "Users", userId);
+
+            await updateDoc(userRef, {
+              transactions: arrayUnion(transaction),
+              // Optionally update balance
+              accountBalance: accountBalance - transferAmount,
+            });
+
+            console.log("Transaction saved to database successfully");
+          }
+
+          // Reset form
+          setAmount("");
+          setAccountNumber("");
+          setSelectedBank("");
+          setNarration("");
+          setAccountName("");
+          setPin("");
+          setStep(1);
+          closeModal();
+
+          // Show success message with risk status
+          const statusColor =
+            status === "high" ? "🔴" : status === "medium" ? "🟡" : "🟢";
+          toast.success(
+            `Transaction completed! ${statusColor} Risk Level: ${status.toUpperCase()}`
+          );
+        } catch (error) {
+          console.error("Error saving transaction:", error);
+          toast.error("Transaction failed. Please try again.");
+        } finally {
+          setIsLoading(false);
+        }
       }, 2000);
+    } catch (error) {
+      console.error("Transaction error:", error);
+      toast.error("An error occurred. Please try again.");
+      setIsLoading(false);
     }
   };
   return (
@@ -158,8 +360,8 @@ export default function SendMoney({ closeModal }: any) {
                     </option>
                     {bankOptions.map((bank) => (
                       <option
-                        key={bank.code}
-                        value={bank.code}
+                        key={bank.name}
+                        value={bank.name}
                         className="bg-gray-800"
                       >
                         {bank.name}
@@ -181,6 +383,7 @@ export default function SendMoney({ closeModal }: any) {
                     placeholder="Narration"
                     value={narration}
                     onChange={(e) => setNarration(e.target.value)}
+                    required
                     className="w-full bg-gray-800/50 backdrop-blur-sm text-white pl-10 pr-4 py-3 rounded-xl border border-gray-600/50 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 focus:outline-none transition-all"
                   />
                 </div>
@@ -217,6 +420,7 @@ export default function SendMoney({ closeModal }: any) {
                   !amount ||
                   accountNumber.length !== 10 ||
                   !selectedBank ||
+                  !narration ||
                   isLoading
                 }
                 className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 disabled:from-gray-600 disabled:to-gray-600 disabled:cursor-not-allowed text-white py-3 rounded-xl font-medium transition-all duration-300 transform hover:scale-[1.02] disabled:hover:scale-100"
