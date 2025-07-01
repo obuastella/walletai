@@ -5,6 +5,7 @@ import TransactionHistory from "./pages/History/TransactionHistory";
 import Register from "./pages/Register";
 import { ToastContainer } from "react-toastify";
 import VerifyEmail from "./pages/(Auth)/VerifyEmail/VerifyEmail";
+import ForgotPassword from "./pages/(Auth)/ForgotPassword";
 function App() {
   return (
     <Router>
@@ -12,6 +13,7 @@ function App() {
         <Route path="/" element={<Index />} />
         <Route path="/register" element={<Register />} />
         <Route path="/verify" element={<VerifyEmail />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/history" element={<TransactionHistory />} />
       </Routes>

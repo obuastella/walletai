@@ -3,7 +3,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { Lock, Mail, EyeOff, Eye } from "lucide-react";
 import { useState } from "react";
 import { auth } from "../../config/firebase";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 export default function LoginForm() {
@@ -106,9 +106,12 @@ export default function LoginForm() {
 
       {/* Remember Me & Forgot Password */}
       <div className="flex items-center justify-between pt-2">
-        <button className="text-sm text-purple-400 hover:text-purple-300 font-medium transition-colors">
+        <Link
+          to="/forgot-password"
+          className="text-sm text-purple-400 hover:text-purple-300 font-medium transition-colors"
+        >
           Forgot password?
-        </button>
+        </Link>
       </div>
 
       {/* Login Button */}
