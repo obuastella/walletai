@@ -15,7 +15,8 @@ export default function Header() {
               Transaction History
             </h1>
             <p className="text-gray-400 mt-1">
-              Monitor and analyze your financial activity with AI
+              Monitor and analyze your financial activity with our System
+              Insights
             </p>
           </div>
           <div className="flex items-center space-x-4">

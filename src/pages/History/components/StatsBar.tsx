@@ -17,11 +17,7 @@ const StatsBar = ({ totalTransactions, filteredTransactions }: any) => (
         <div>
           <p className="text-gray-400 text-sm">Verified</p>
           <p className="text-2xl font-bold text-green-400">
-            {
-              filteredTransactions.filter(
-                (t: any) => t.securityStatus === "verified"
-              ).length
-            }
+            {filteredTransactions.filter((t: any) => t.status === "low").length}
           </p>
         </div>
         <CheckCircle className="w-8 h-8 text-green-400" />
@@ -31,12 +27,11 @@ const StatsBar = ({ totalTransactions, filteredTransactions }: any) => (
     <div className="bg-gray-900/50 backdrop-blur-xl rounded-2xl p-6 border border-gray-800">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-gray-400 text-sm">Flagged</p>
+          <p className="text-gray-400 text-sm">Medium risk</p>
           <p className="text-2xl font-bold text-yellow-400">
             {
-              filteredTransactions.filter(
-                (t: any) => t.securityStatus === "flagged"
-              ).length
+              filteredTransactions.filter((t: any) => t.status === "medium")
+                .length
             }
           </p>
         </div>
@@ -46,12 +41,11 @@ const StatsBar = ({ totalTransactions, filteredTransactions }: any) => (
     <div className="bg-gray-900/50 backdrop-blur-xl rounded-2xl p-6 border border-gray-800">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-gray-400 text-sm">Blocked</p>
+          <p className="text-gray-400 text-sm">High risk</p>
           <p className="text-2xl font-bold text-red-400">
             {
-              filteredTransactions.filter(
-                (t: any) => t.securityStatus === "blocked"
-              ).length
+              filteredTransactions.filter((t: any) => t.status === "high")
+                .length
             }
           </p>
         </div>

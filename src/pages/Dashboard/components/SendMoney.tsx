@@ -252,7 +252,7 @@ export default function SendMoney({ closeModal }: any) {
           const statusColor =
             status === "high" ? "🔴" : status === "medium" ? "🟡" : "🟢";
           toast.success(
-            `Transaction completed! ${statusColor} Risk Level: ${status.toUpperCase()}`
+            `Transaction completed! ${statusColor} Risk Level: ${status.toUpperCase()}. Reload your page!`
           );
         } catch (error) {
           console.error("Error saving transaction:", error);

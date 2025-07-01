@@ -1,4 +1,3 @@
-//@ts-nocheck
 import {
   CheckCircle,
   AlertTriangle,
@@ -6,7 +5,6 @@ import {
   ArrowDownLeft,
   ArrowUpRight,
   Brain,
-  ChevronRight,
 } from "lucide-react";
 import useUserData from "../../../hooks/useUserData";
 import { useUserStore } from "../../../store/userStore";
@@ -39,7 +37,7 @@ export default function Transactions() {
         <h2 className="my-42 text-center text-gray-600">no transactions</h2>
       ) : (
         <>
-          {transactions.map((transaction: any, index: any) => {
+          {transactions.slice(0, 3).map((transaction: any, index: any) => {
             const SecurityIcon = getSecurityIcon(transaction.securityStatus);
             const isReceived = transaction.type === "received";
             return (

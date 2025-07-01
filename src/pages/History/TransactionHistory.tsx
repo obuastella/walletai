@@ -3,25 +3,28 @@ import { useState } from "react";
 import Header from "./components/Header";
 import StatsBar from "./components/StatsBar";
 import TransactionTable from "./components/TransactionTable";
-import { transactions } from "../transactions";
+// import { transactions } from "../transactions";
 import FilterBar from "./components/FilterBar";
+import useUserData from "../../hooks/useUserData";
+import { useUserStore } from "../../store/userStore";
 
 export default function TransactionHistory() {
+  useUserData();
+  const { transactions } = useUserStore();
   const [filter, setFilter] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
 
   const filteredTransactions = transactions.filter((transaction) => {
-    const matchesFilter =
-      filter === "all" || transaction.securityStatus === filter;
+    const matchesFilter = filter === "all" || transaction.status === filter;
     const matchesSearch =
-      transaction.description
+      transaction.narration.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      transaction.accountName
         .toLowerCase()
         .includes(searchTerm.toLowerCase()) ||
-      transaction.merchant.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      transaction.reference.toLowerCase().includes(searchTerm.toLowerCase());
+      transaction.bank.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory =
-      categoryFilter === "all" || transaction.category === categoryFilter;
+      categoryFilter === "all" || transaction.narration === categoryFilter;
     return matchesFilter && matchesSearch && matchesCategory;
   });
 

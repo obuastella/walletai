@@ -1,27 +1,9 @@
 import { ArrowDownLeft, ArrowUpRight, Brain, Activity } from "lucide-react";
+import { formatTime } from "../../../utils/formatTime";
+import { formatDate } from "../../../utils/formatDate";
+import { getRiskColor } from "../../../utils/getRiskColor";
 
 export default function TransactionTable({ filteredTransactions }: any) {
-  const getRiskColor = (level: any) => {
-    switch (level) {
-      case "low":
-        return "bg-green-500/20 text-green-400 border-green-500/30";
-      case "medium":
-        return "bg-yellow-500/20 text-yellow-400 border-yellow-500/30";
-      case "high":
-        return "bg-red-500/20 text-red-400 border-red-500/30";
-      default:
-        return "bg-gray-500/20 text-gray-400 border-gray-500/30";
-    }
-  };
-
-  const formatDate = (dateString: any) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    });
-  };
   return (
     <div className="bg-gray-900/50 backdrop-blur-xl rounded-2xl overflow-hidden border border-gray-800">
       <div className="overflow-x-auto">
@@ -69,13 +51,13 @@ export default function TransactionTable({ filteredTransactions }: any) {
                       </div>
                       <div>
                         <p className="text-white font-medium">
-                          {transaction.description}
+                          {transaction.narration}
                         </p>
                         <p className="text-gray-400 text-sm">
-                          {transaction.merchant}
+                          {transaction.accountName}
                         </p>
                         <p className="text-gray-500 text-xs">
-                          {transaction.reference}
+                          {transaction.bank}
                         </p>
                       </div>
                     </div>
@@ -93,7 +75,7 @@ export default function TransactionTable({ filteredTransactions }: any) {
                       </span>
                     ) : (
                       <span>
-                        {transaction.type === "received" ? "+" : "-"}$
+                        {transaction.type === "received" ? "+" : "-"}N
                         {transaction.amount.toFixed(2)}
                       </span>
                     )}
@@ -104,23 +86,23 @@ export default function TransactionTable({ filteredTransactions }: any) {
                         {formatDate(transaction.date)}
                       </p>
                       <p className="text-gray-400 text-xs">
-                        {transaction.time}
+                        {formatTime(transaction.date)}
                       </p>
                     </div>
                   </td>
 
                   <td className="p-4">
                     <span
-                      className={`inline-flex items-center px-2 py-1 rounded-lg text-xs font-medium border ${getRiskColor(transaction.riskLevel)}`}
+                      className={`inline-flex items-center px-2 py-1 rounded-lg text-xs font-medium border ${getRiskColor(transaction.status)}`}
                     >
-                      {transaction.riskLevel.toUpperCase()}
+                      {transaction.status.toUpperCase()}
                     </span>
                   </td>
                   <td className="p-4 max-w-xs">
                     <div className="flex items-start space-x-2">
                       <Brain className="w-4 h-4 text-purple-400 mt-0.5 flex-shrink-0" />
                       <p className="text-purple-400 text-xs leading-relaxed">
-                        {transaction.aiInsight}
+                        {transaction.systemInsight}
                       </p>
                     </div>
                   </td>
