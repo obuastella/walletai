@@ -93,6 +93,7 @@ export default function RegisterForm() {
       batch.set(userDocRef, {
         email: user.email,
         accountBalance: 5000,
+        transactions: [],
         isVerified: false,
         createdAt: serverTimestamp(),
       });

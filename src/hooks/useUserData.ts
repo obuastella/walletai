@@ -29,6 +29,7 @@ const useUserData = () => {
             setUser({
               email: user.email || "",
               accountBalance: userData.accountBalance || 0,
+              transactions: userData.transactions || [],
             });
 
             // console.log("User data set in store");
@@ -40,6 +41,7 @@ const useUserData = () => {
             setUser({
               email: user.email || "",
               accountBalance: 0,
+              transactions: [],
             });
           }
         } catch (err) {
@@ -54,6 +56,7 @@ const useUserData = () => {
         setUser({
           email: "",
           accountBalance: 0,
+          transactions: [],
         });
         setLoading(false);
       }
